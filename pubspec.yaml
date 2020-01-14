@@ -1,7 +1,6 @@
 name: flame_texturepacker
 description: A new Flutter package project.
 version: 1.0.0
-author: Jonas Fröber (jonasfroeber@gmail.com)
 homepage: https://github.com/Brixto/flame_texturepacker
 
 environment:
@@ -10,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flame:
+  flame: ^0.17.3
 
 dev_dependencies:
   flutter_test:
