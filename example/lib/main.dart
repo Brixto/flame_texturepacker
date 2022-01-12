@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame_texturepacker/flame_texturepacker.dart';
 import 'package:flutter/material.dart';
+import 'package:flame_texturepacker/flame_texturepacker.dart';
 
 main() {
   final myGame = MyGame();
@@ -19,7 +19,7 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     super.onLoad();
 
-    final sprites = await TexturepackerLoader.fromJSONAtlas('spritesheet.png', 'spritesheet.json');
+    final sprites = await fromJSONAtlas('spritesheet.png', 'spritesheet.json');
     walk = SpriteAnimation.spriteList(sprites, stepTime: 0.1);
   }
 
@@ -32,6 +32,6 @@ class MyGame extends FlameGame {
   @override
   void render(Canvas c) {
     super.render(c);
-    walk?.getSprite().render(c);
+    walk.getSprite().render(c);
   }
 }

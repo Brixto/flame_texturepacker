@@ -3,10 +3,11 @@ library flame_texturepacker;
 import 'dart:convert';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/game.dart';
 import 'package:flame/sprite.dart';
 
-class TexturepackerLoader {
-  static Future<List<Sprite>> fromJSONAtlas(
+extension TexturepackerLoader on Game {
+  Future<List<Sprite>> fromJSONAtlas(
       String imagePath, String dataPath) async {
     final String content = await Flame.assets.readFile(dataPath);
     final Map<String, dynamic> json = jsonDecode(content);
@@ -26,7 +27,6 @@ class TexturepackerLoader {
           srcSize: Vector2(width.toDouble(), height.toDouble()));
       return sprite;
     });
-
     return sprites.toList();
   }
 }
