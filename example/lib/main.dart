@@ -1,39 +1,37 @@
-import 'dart:ui';
-import 'package:flame/animation.dart' as anim;
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/sprite.dart';
 import 'package:flame_texturepacker/flame_texturepacker.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyGame().widget);
+main() {
+  final myGame = MyGame();
+  runApp(
+    GameWidget(
+      game: myGame,
+    ),
+  );
+}
 
-class MyGame extends Game {
-  List<Sprite> sprites = List();
-  anim.Animation walk = anim.Animation.empty();
+class MyGame extends FlameGame {
+  late SpriteAnimation walk;
 
-  MyGame() {
-    TexturepackerLoader.fromJSONAtlas('spritesheet.png', 'spritesheet.json')
-        .then((sprites) {
-      this.sprites = sprites;
-      walk = anim.Animation.spriteList(
-        sprites,
-        stepTime: 0.1,
-        loop: true,
-      );
-    });
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+
+    final sprites = await TexturepackerLoader.fromJSONAtlas('spritesheet.png', 'spritesheet.json');
+    walk = SpriteAnimation.spriteList(sprites, stepTime: 0.1);
   }
 
   @override
-  void render(Canvas canvas) {
-    if (walk.loaded()) {
-      walk.getSprite().render(canvas);
-    }
+  void update(double dt) {
+    super.update(dt);
+      walk.update(dt);
   }
 
   @override
-  void update(double t) {
-    if (walk.loaded()) {
-      this.walk.update(t);
-    }
+  void render(Canvas c) {
+    super.render(c);
+    walk?.getSprite().render(c);
   }
 }

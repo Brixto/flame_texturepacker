@@ -1,6 +1,7 @@
 library flame_texturepacker;
 
 import 'dart:convert';
+import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 
@@ -11,6 +12,7 @@ class TexturepackerLoader {
     final Map<String, dynamic> json = jsonDecode(content);
 
     final Map<String, dynamic> jsonFrames = json['frames'];
+    final image = await Flame.images.load(imagePath);
 
     final sprites = jsonFrames.values.map((value) {
       final frameData = value['frame'];
@@ -19,14 +21,9 @@ class TexturepackerLoader {
       final int width = frameData['w'];
       final int height = frameData['h'];
 
-      final Sprite sprite = Sprite(
-        imagePath,
-        x: x.toDouble(),
-        y: y.toDouble(),
-        width: width.toDouble(),
-        height: height.toDouble(),
-      );
-
+      final Sprite sprite = Sprite(image,
+          srcPosition: Vector2(x.toDouble(), y.toDouble()),
+          srcSize: Vector2(width.toDouble(), height.toDouble()));
       return sprite;
     });
 
