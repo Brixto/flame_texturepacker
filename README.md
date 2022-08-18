@@ -21,9 +21,12 @@ dependencies:
  import the plugin like this:
  `import 'package:flame_texturepacker/flame_texturepacker.dart';`
  
- generate a list of Sprites from the provided spritesheet:
- `List<Sprites> sprites =  await TexturepackerLoader.fromJSONAtlas('spritesheet.png', 'spritesheet.json');`
- 
+ generate a list of `Sprite`s from the provided spritesheet:
+ `List<Sprite> sprites = await TexturepackerLoader.fromJSONAtlas('spritesheet.png', 'spritesheet.json');`
+
+ generate a map of `Sprite`s from the provided spritesheet where the key will be the `Sprite` filename without extension:
+ `Map<String, Sprite> map = await TexturepackerLoader.fromJSONAtlasAsMap('spritesheet.png', 'spritesheet.json');`
+
  the list can be used to generate an Animation as well:
  ```
  Animation anim = Animation.spriteList(
