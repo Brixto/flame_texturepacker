@@ -6,8 +6,14 @@ import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_texturepacker/atlas/texture_atlas.dart';
+
+export 'package:flame_texturepacker/atlas/model/atlas_sprite.dart';
 
 extension TexturepackerLoader on Game {
+  Future<TextureAtlas> fromAtlas(String assetsPath) async =>
+      TextureAtlas().load(assetsPath);
+
   Future<List<Sprite>> fromJSONAtlas(String imagePath, String dataPath) async {
     final jsonFrames = await _loadJsonFrames(dataPath);
     final image = await Flame.images.load(imagePath);
