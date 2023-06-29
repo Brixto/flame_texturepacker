@@ -13,27 +13,32 @@ main() {
 }
 
 class MyGame extends FlameGame {
-  late SpriteAnimation walk;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
     // Load the atlasMap.
     final atlas = await fromAtlas('FlameAtlasMap.atlas');
 
     // Get a list of sprites ordered by their index
     final walkingSprites = atlas.findSpritesByName('robot_walk');
 
+    // Create animation with the list of sprites
     final walkingAnimation = SpriteAnimation.spriteList(
       walkingSprites,
       stepTime: 0.1,
       loop: true,
     );
 
+
     // Get individual sprites by name
     final jumpSprite = atlas.findSpriteByName('robot_jump')!;
     final fallSprite = atlas.findSpriteByName('robot_fall')!;
     final idleSprite = atlas.findSpriteByName('robot_idle')!;
+
+    // Get the list of all sprites in the sprite sheet
+    final allSprites = atlas.sprites;
 
     add(
       SpriteComponent(

@@ -25,19 +25,19 @@ class AtlasSprite extends Sprite {
   /// packing.
   final double offsetY;
 
-  /// The width of the image, after whitespace was removed for packing. */
+  /// The width of the image, after whitespace was removed for packing.
   final double packedWidth;
 
-  /// The height of the image, after whitespace was removed for packing. */
+  /// The height of the image, after whitespace was removed for packing.
   final double packedHeight;
 
-  /// The width of the image, before whitespace was removed and rotation was applied for packing. */
+  /// The width of the image, before whitespace was removed and rotation was applied for packing.
   final double originalWidth;
 
-  /// The height of the image, before whitespace was removed for packing. */
+  /// The height of the image, before whitespace was removed for packing.
   final double originalHeight;
 
-  /// If true, the region has been rotated 90 degrees counter clockwise. */
+  /// If true, the region has been rotated 90 degrees counter clockwise.
   final bool rotate;
 
   /// The degrees the region has been rotated, counter clockwise between 0 and 359. Most atlas region handling deals only with
@@ -56,7 +56,6 @@ class AtlasSprite extends Sprite {
         originalHeight = region.originalHeight,
         rotate = region.rotate,
         degrees = region.degrees,
-        transform = Transform2D(),
         super(
           region.page.texture,
           srcPosition: Vector2(region.left, region.top),
@@ -71,8 +70,8 @@ class AtlasSprite extends Sprite {
     }
   }
 
-  final Transform2D transform;
   late final Decorator decorator;
+  final Transform2D transform = Transform2D();
 
   // Used to avoid the creation of new Vector2 objects in render.
   static final _tmpRenderPosition = Vector2.zero();
@@ -92,7 +91,7 @@ class AtlasSprite extends Sprite {
       _tmpRenderPosition.setZero();
     }
 
-    // Transform if there is rotation
+    // If the sprite is rotated on the sprite sheet un-rotate it and adjust the size
     final _anchor = rotate ? Anchor.bottomLeft : anchor;
 
     final tempSize = size ?? srcSize;

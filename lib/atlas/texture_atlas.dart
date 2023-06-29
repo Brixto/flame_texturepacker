@@ -40,7 +40,6 @@ class TextureAtlas {
     return matched;
   }
 
-  /// Loads the specified pack file, using the parent directory of the pack file to find the page images.
   Future<TextureAtlas> load(String path) async {
     final atlasData = await _TextureAtlasData()._load(path);
 
