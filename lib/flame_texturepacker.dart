@@ -15,6 +15,7 @@ extension TexturepackerLoader on Game {
   Future<TextureAtlas> fromAtlas(String assetsPath) async =>
       TextureAtlas().load(assetsPath);
 
+  @Deprecated('Please use fromAtlas() and files with extension .atlas')
   Future<List<Sprite>> fromJSONAtlas(String imagePath, String dataPath) async {
     final jsonFrames = await _loadJsonFrames(dataPath);
     final image = await Flame.images.load(imagePath);
@@ -26,6 +27,7 @@ extension TexturepackerLoader on Game {
     return sprites.toList();
   }
 
+  @Deprecated('Please use fromAtlas() and files with extension .atlas')
   Future<Map<String, Sprite>> fromJSONAtlasAsMap(
       String imagePath, String dataPath) async {
     final jsonFrames = await _loadJsonFrames(dataPath);
