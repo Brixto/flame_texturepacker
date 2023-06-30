@@ -6,8 +6,16 @@ import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_texturepacker/atlas/texture_atlas.dart';
+
+export 'package:flame_texturepacker/atlas/model/atlas_sprite.dart';
 
 extension TexturepackerLoader on Game {
+  /// Loads the specified pack file, using the parent directory of the pack file to find the page images.
+  Future<TextureAtlas> fromAtlas(String assetsPath) async =>
+      TextureAtlas().load(assetsPath);
+
+  @Deprecated('Please use fromAtlas() and files with extension .atlas')
   Future<List<Sprite>> fromJSONAtlas(String imagePath, String dataPath) async {
     final jsonFrames = await _loadJsonFrames(dataPath);
     final image = await Flame.images.load(imagePath);
@@ -19,6 +27,7 @@ extension TexturepackerLoader on Game {
     return sprites.toList();
   }
 
+  @Deprecated('Please use fromAtlas() and files with extension .atlas')
   Future<Map<String, Sprite>> fromJSONAtlasAsMap(
       String imagePath, String dataPath) async {
     final jsonFrames = await _loadJsonFrames(dataPath);
