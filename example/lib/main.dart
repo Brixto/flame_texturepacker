@@ -38,7 +38,7 @@ class MyGame extends FlameGame {
     final idleSprite = atlas.findSpriteByName('robot_idle')!;
 
     // Get the list of all sprites in the sprite sheet
-    final allSprites = atlas.sprites;
+    final allSprites = atlas.sprites; // ignore: unused_local_variable
 
     add(
       SpriteComponent(
