@@ -13,40 +13,62 @@ main() {
 }
 
 class MyGame extends FlameGame {
-  late SpriteAnimation walk;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
-    final sprites = await fromJSONAtlas('spritesheet.png', 'spritesheet.json');
-    walk = SpriteAnimation.spriteList(sprites, stepTime: 0.1);
+    // Load the atlasMap.
+    final atlas = await fromAtlas('FlameAtlasMap.atlas');
 
-    final map = await fromJSONAtlasAsMap('spritesheet.png', 'spritesheet.json');
-    int i = 0;
-    map.forEach((key, element) {
-      add(
-        TextComponent(
-          text: key,
-          textRenderer: TextPaint(style: const TextStyle(fontSize: 10)),
-          position: Vector2(i * 60, 170),
-          anchor: Anchor.centerLeft,
-        ),
-      );
-      add(
-        SpriteComponent(
-          sprite: element,
-          position: Vector2(i * 60, 180),
-          size: Vector2(60, 60),
-        ),
-      );
-      i++;
-    });
+    // Get a list of sprites ordered by their index
+    final walkingSprites = atlas.findSpritesByName('robot_walk');
+
+    // Create animation with the list of sprites
+    final walkingAnimation = SpriteAnimation.spriteList(
+      walkingSprites,
+      stepTime: 0.1,
+      loop: true,
+    );
+
+
+    // Get individual sprites by name
+    final jumpSprite = atlas.findSpriteByName('robot_jump')!;
+    final fallSprite = atlas.findSpriteByName('robot_fall')!;
+    final idleSprite = atlas.findSpriteByName('robot_idle')!;
+
+    // Get the list of all sprites in the sprite sheet
+    final allSprites = atlas.sprites; // ignore: unused_local_variable
+
+    add(
+      SpriteComponent(
+        sprite: jumpSprite,
+        position: Vector2(200, 100),
+        size: Vector2(72, 96),
+      ),
+    );
+
+    add(
+      SpriteComponent(
+        sprite: fallSprite,
+        position: Vector2(300, 100),
+        size: Vector2(72, 96),
+      ),
+    );
+
+    add(
+      SpriteComponent(
+        sprite: idleSprite,
+        position: Vector2(400, 100),
+        size: Vector2(72, 96),
+      ),
+    );
+
     add(
       SpriteAnimationComponent(
-        position: Vector2(i * 60, 180),
-        size: Vector2(60, 60),
-        animation: walk,
+        animation: walkingAnimation,
+        position: Vector2(300, 200),
+        size: Vector2(72, 96),
       ),
     );
   }
