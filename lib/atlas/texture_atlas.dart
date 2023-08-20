@@ -9,6 +9,7 @@ import 'package:flame_texturepacker/atlas/model/page.dart';
 import 'package:flame_texturepacker/atlas/model/region.dart';
 import 'package:flame_texturepacker/atlas/model/atlas_sprite.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/painting.dart';
 
 final _images = Images(prefix: 'assets/');
 
@@ -67,7 +68,7 @@ class _TextureAtlasData {
   Future<_TextureAtlasData> _fromAssets(String path) async {
     final fileAsString = await Flame.assets.readFile(path);
 
-    await _parse(fileAsString);
+    await _parse(fileAsString, path, fromStorage: false);
     return this;
   }
 
@@ -76,7 +77,7 @@ class _TextureAtlasData {
 
     try {
       final fileAsString = await file.readAsString();
-      await _parse(fileAsString);
+      await _parse(fileAsString, path, fromStorage: true);
     } catch (e) {
       throw Exception("Error loading from storage: ${e.toString()}");
     }
@@ -84,7 +85,8 @@ class _TextureAtlasData {
     return this;
   }
 
-  Future<void> _parse(String fileAsString) async {
+  Future<void> _parse(String fileAsString, String path,
+      {required bool fromStorage}) async {
     final iterator = LineSplitter.split(fileAsString).iterator;
     var line = iterator.moveNextAndGet();
     var hasIndexes = false;
@@ -103,7 +105,22 @@ class _TextureAtlasData {
           page.textureFile = line;
           final parentPath = (path.split('/')..removeLast()).join('/');
           final texturePath = '$parentPath/$line';
-          page.texture = await _images.load(texturePath);
+
+          if (fromStorage) {
+            try {
+              File file = File(path);
+              final bytes = await file.readAsBytes();
+              final decodedBytes = await decodeImageFromList(bytes);
+              Flame.images.add(path, decodedBytes);
+              page.texture = Flame.images.fromCache(path);
+            } catch (e) {
+              throw Exception(
+                  "Could not add storage file to Flame cache. ${e.toString()}");
+            }
+          } else {
+            page.texture = await _images.load(texturePath);
+          }
+
           while (true) {
             line = iterator.moveNextAndGet();
             if (line == null) break;
