@@ -56,7 +56,7 @@ extension TexturepackerLoader on Game {
     return json['frames'];
   }
 
-  Sprite createSprite(dynamic value, Image image) {
+  Sprite _createSprite(dynamic value, Image image) {
     final frameData = value['frame'];
     final int x = frameData['x'];
     final int y = frameData['y'];

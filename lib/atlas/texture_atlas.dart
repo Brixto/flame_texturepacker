@@ -21,6 +21,11 @@ class TextureAtlas {
   AtlasSprite? findSpriteByName(String name) =>
       sprites.firstWhereOrNull((e) => e.name == name);
 
+  /// Returns first region found where name matches keyword. This method uses string comparison to find
+  /// the region, so the result should be cached rather than calling this method multiple times.
+  AtlasSprite? findSpriteByKeyword(String keyword) =>
+      sprites.firstWhereOrNull((e) => e.name.contains(keyword));
+
   /// Returns the first region found with the specified name and index. This method uses string
   /// comparison to find the region, so the result should be cached rather than calling this
   /// method multiple times.
@@ -38,6 +43,17 @@ class TextureAtlas {
     final matched = <AtlasSprite>[];
     for (final sprite in sprites) {
       if (sprite.name == name) matched.add(sprite);
+    }
+    return matched;
+  }
+
+  /// Returns all regions that match a keyword, ordered by smallest to largest index. This method uses
+  /// string comparison to find the regions, so the result should be cached rather than calling
+  /// this method multiple times.
+  List<AtlasSprite> findSpritesByKeyword(String name) {
+    final matched = <AtlasSprite>[];
+    for (final sprite in sprites) {
+      if (sprite.name.contains(name)) matched.add(sprite);
     }
     return matched;
   }
