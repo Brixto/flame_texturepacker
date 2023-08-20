@@ -1,6 +1,7 @@
 library flame_texturepacker;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flame/cache.dart';
 import 'package:flame/flame.dart';
@@ -41,7 +42,16 @@ class TextureAtlas {
   }
 
   Future<TextureAtlas> load(String path) async {
-    final atlasData = await _TextureAtlasData()._load(path);
+    final atlasData = await _TextureAtlasData()._fromAssets(path);
+
+    for (final region in atlasData.regions) {
+      sprites.add(AtlasSprite(region));
+    }
+    return this;
+  }
+
+  Future<TextureAtlas> loadFromStorage(String path) async {
+    final atlasData = await _TextureAtlasData()._fromStorage(path);
 
     for (final region in atlasData.regions) {
       sprites.add(AtlasSprite(region));
@@ -54,9 +64,27 @@ class _TextureAtlasData {
   final pages = <Page>[];
   final regions = <Region>[];
 
-  Future<_TextureAtlasData> _load(String path) async {
+  Future<_TextureAtlasData> _fromAssets(String path) async {
     final fileAsString = await Flame.assets.readFile(path);
 
+    await _parse(fileAsString);
+    return this;
+  }
+
+  Future<_TextureAtlasData> _fromStorage(String path) async {
+    File file = File(path);
+
+    try {
+      final fileAsString = await file.readAsString();
+      await _parse(fileAsString);
+    } catch (e) {
+      throw Exception("Error loading from storage: ${e.toString()}");
+    }
+
+    return this;
+  }
+
+  Future<void> _parse(String fileAsString) async {
     final iterator = LineSplitter.split(fileAsString).iterator;
     var line = iterator.moveNextAndGet();
     var hasIndexes = false;
@@ -159,7 +187,6 @@ class _TextureAtlasData {
         return i1 - i2;
       });
     }
-    return this;
   }
 
   ({int count, List<String> entry}) _readEntry(String line) {
