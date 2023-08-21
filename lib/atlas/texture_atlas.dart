@@ -91,12 +91,12 @@ class _TextureAtlasData {
   Future<_TextureAtlasData> _fromStorage(String path) async {
     File file = File(path);
 
-    try {
-      final fileAsString = await file.readAsString();
-      await _parse(fileAsString, path, fromStorage: true);
-    } catch (e) {
-      throw Exception("Error loading from storage: ${e.toString()}");
-    }
+    // try {
+    final fileAsString = await file.readAsString();
+    await _parse(fileAsString, path, fromStorage: true);
+    // } catch (e) {
+    //   throw Exception("Error loading from storage: ${e.toString()}");
+    // }
 
     return this;
   }
@@ -123,16 +123,16 @@ class _TextureAtlasData {
           final texturePath = '$parentPath/$line';
 
           if (fromStorage) {
-            try {
-              File file = File(path);
-              final bytes = await file.readAsBytes();
-              final decodedBytes = await decodeImageFromList(bytes);
-              Flame.images.add(path, decodedBytes);
-              page.texture = Flame.images.fromCache(path);
-            } catch (e) {
-              throw Exception(
-                  "Could not add storage file to Flame cache. ${e.toString()}");
-            }
+            // try {
+            File file = File(path);
+            final bytes = await file.readAsBytes();
+            final decodedBytes = await decodeImageFromList(bytes);
+            Flame.images.add(path, decodedBytes);
+            page.texture = Flame.images.fromCache(path);
+            // } catch (e) {
+            //   throw Exception(
+            //       "Could not add storage file to Flame cache. ${e.toString()}");
+            // }
           } else {
             page.texture = await _images.load(texturePath);
           }
