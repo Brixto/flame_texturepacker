@@ -124,8 +124,8 @@ class _TextureAtlasData {
 
           if (fromStorage) {
             // try {
-            File file = File(path);
-            final bytes = await file.readAsBytes();
+            File textureFile = File(path);
+            final bytes = await textureFile.readAsBytes();
             final decodedBytes = await decodeImageFromList(bytes);
             Flame.images.add(path, decodedBytes);
             page.texture = Flame.images.fromCache(path);
