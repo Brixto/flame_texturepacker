@@ -124,11 +124,11 @@ class _TextureAtlasData {
 
           if (fromStorage) {
             // try {
-            File textureFile = File(path);
+            File textureFile = File(texturePath);
             final bytes = await textureFile.readAsBytes();
             final decodedBytes = await decodeImageFromList(bytes);
-            Flame.images.add(path, decodedBytes);
-            page.texture = Flame.images.fromCache(path);
+            Flame.images.add(texturePath, decodedBytes);
+            page.texture = Flame.images.fromCache(texturePath);
             // } catch (e) {
             //   throw Exception(
             //       "Could not add storage file to Flame cache. ${e.toString()}");
