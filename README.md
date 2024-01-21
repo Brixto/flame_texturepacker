@@ -16,7 +16,9 @@ dependencies:
  ```
  
 ## Usage
- 
+
+### Asset Storage
+
 Drop generated atlas file and sprite sheet images into the  `assets/` and link the files in your `pubspec.yaml` file:
  
 ```yaml
@@ -34,6 +36,16 @@ Load the TextureAtlas passing the path of the sprite sheet atlas file:
 ```Dart
 final atlas = await fromAtlas('FlameAtlasMap.atlas');
 ```
+
+### File Storage
+
+If you are using file storage, grab your atlas file like this:
+
+```Dart
+final atlas = await fromAtlas("${(await getApplicationDocumentsDirectory()).path}/FlamAtlasMap.atlas", fromStorage: true);
+```
+
+### Getting Sprites
 
 Get a list of sprites ordered by their index, you can use the list to generate an animation:
  
@@ -53,6 +65,13 @@ Get individual sprites by name:
 final jumpSprite = atlas.findSpriteByName('robot_jump')!;
 final fallSprite = atlas.findSpriteByName('robot_fall')!;
 final idleSprite = atlas.findSpriteByName('robot_idle')!;
+```
+
+Get a single sprite or list of sprites by keyword:
+
+```Dart
+final jumpSprites = atlas.findSpritesByKeyword('robot_jump')!;
+final fallSprite = atlas.findSpriteByKeyword('robot_fall')!;
 ```
 
 Full working example can be found in [example folder][3].

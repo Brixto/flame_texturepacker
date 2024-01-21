@@ -1,6 +1,7 @@
 library flame_texturepacker;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flame/cache.dart';
 import 'package:flame/flame.dart';
@@ -8,6 +9,7 @@ import 'package:flame_texturepacker/atlas/model/page.dart';
 import 'package:flame_texturepacker/atlas/model/region.dart';
 import 'package:flame_texturepacker/atlas/model/atlas_sprite.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/painting.dart';
 
 final _images = Images(prefix: 'assets/');
 
@@ -18,6 +20,11 @@ class TextureAtlas {
   /// the region, so the result should be cached rather than calling this method multiple times.
   AtlasSprite? findSpriteByName(String name) =>
       sprites.firstWhereOrNull((e) => e.name == name);
+
+  /// Returns first region found where name matches keyword. This method uses string comparison to find
+  /// the region, so the result should be cached rather than calling this method multiple times.
+  AtlasSprite? findSpriteByKeyword(String keyword) =>
+      sprites.firstWhereOrNull((e) => e.name.contains(keyword));
 
   /// Returns the first region found with the specified name and index. This method uses string
   /// comparison to find the region, so the result should be cached rather than calling this
@@ -40,8 +47,28 @@ class TextureAtlas {
     return matched;
   }
 
+  /// Returns all regions that match a keyword, ordered by smallest to largest index. This method uses
+  /// string comparison to find the regions, so the result should be cached rather than calling
+  /// this method multiple times.
+  List<AtlasSprite> findSpritesByKeyword(String name) {
+    final matched = <AtlasSprite>[];
+    for (final sprite in sprites) {
+      if (sprite.name.contains(name)) matched.add(sprite);
+    }
+    return matched;
+  }
+
   Future<TextureAtlas> load(String path) async {
-    final atlasData = await _TextureAtlasData()._load(path);
+    final atlasData = await _TextureAtlasData()._fromAssets(path);
+
+    for (final region in atlasData.regions) {
+      sprites.add(AtlasSprite(region));
+    }
+    return this;
+  }
+
+  Future<TextureAtlas> loadFromStorage(String path) async {
+    final atlasData = await _TextureAtlasData()._fromStorage(path);
 
     for (final region in atlasData.regions) {
       sprites.add(AtlasSprite(region));
@@ -54,9 +81,28 @@ class _TextureAtlasData {
   final pages = <Page>[];
   final regions = <Region>[];
 
-  Future<_TextureAtlasData> _load(String path) async {
+  Future<_TextureAtlasData> _fromAssets(String path) async {
     final fileAsString = await Flame.assets.readFile(path);
 
+    await _parse(fileAsString, path, fromStorage: false);
+    return this;
+  }
+
+  Future<_TextureAtlasData> _fromStorage(String path) async {
+    File file = File(path);
+
+    try {
+      final fileAsString = await file.readAsString();
+      await _parse(fileAsString, path, fromStorage: true);
+    } catch (e) {
+      throw Exception("Error loading from storage: ${e.toString()}");
+    }
+
+    return this;
+  }
+
+  Future<void> _parse(String fileAsString, String path,
+      {required bool fromStorage}) async {
     final iterator = LineSplitter.split(fileAsString).iterator;
     var line = iterator.moveNextAndGet();
     var hasIndexes = false;
@@ -75,7 +121,22 @@ class _TextureAtlasData {
           page.textureFile = line;
           final parentPath = (path.split('/')..removeLast()).join('/');
           final texturePath = '$parentPath/$line';
-          page.texture = await _images.load(texturePath);
+
+          if (fromStorage) {
+            try {
+              File textureFile = File(texturePath);
+              final bytes = await textureFile.readAsBytes();
+              final decodedBytes = await decodeImageFromList(bytes);
+              Flame.images.add(texturePath, decodedBytes);
+              page.texture = Flame.images.fromCache(texturePath);
+            } catch (e) {
+              throw Exception(
+                  "Could not add storage file to Flame cache. ${e.toString()}");
+            }
+          } else {
+            page.texture = await _images.load(texturePath);
+          }
+
           while (true) {
             line = iterator.moveNextAndGet();
             if (line == null) break;
@@ -159,7 +220,6 @@ class _TextureAtlasData {
         return i1 - i2;
       });
     }
-    return this;
   }
 
   ({int count, List<String> entry}) _readEntry(String line) {

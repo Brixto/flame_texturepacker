@@ -12,8 +12,11 @@ export 'package:flame_texturepacker/atlas/model/atlas_sprite.dart';
 
 extension TexturepackerLoader on Game {
   /// Loads the specified pack file, using the parent directory of the pack file to find the page images.
-  Future<TextureAtlas> fromAtlas(String assetsPath) async =>
-      TextureAtlas().load(assetsPath);
+  Future<TextureAtlas> fromAtlas(String assetsPath,
+          {bool fromStorage = false}) async =>
+      fromStorage
+          ? await TextureAtlas().loadFromStorage(assetsPath)
+          : await TextureAtlas().load(assetsPath);
 
   @Deprecated('Please use fromAtlas() and files with extension .atlas')
   Future<List<Sprite>> fromJSONAtlas(String imagePath, String dataPath) async {
